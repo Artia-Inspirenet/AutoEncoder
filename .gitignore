@@ -1,0 +1,7 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# training and validation datasets are seperately downloaded at each local computer.
+datasets/
