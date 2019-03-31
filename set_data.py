@@ -157,7 +157,7 @@ def create_mnist_dataset(batch_size, split) -> Tuple[tf.data.Dataset, int]:
     """
     images = read_mnist_images(split)
     labels = read_mnist_labels(split)
-
+    #random = np.random.RandomState(SEED)
     def gen():
         for image, label in zip(images, labels):
             yield image, label
@@ -165,11 +165,9 @@ def create_mnist_dataset(batch_size, split) -> Tuple[tf.data.Dataset, int]:
     ds = tf.data.Dataset.from_generator(gen, (tf.uint8, tf.uint8), ((28, 28, 1), (1,)))
 
     if split == 'train':
-        return ds.batch(batch_size).map(transform_train), len(labels)
+        return ds.shuffle(128, seed=np.random.randint(0, 1024)).batch(batch_size).repeat().map(transform_train), len(labels)
     elif split == 'val':
         return ds.batch(batch_size).map(transform_val), len(labels)
-
-
 def main():
 	os.makedirs('./datasets/mnist')
 	get_data()
@@ -181,6 +179,9 @@ def batch_test(batch_size):
 
 	with tf.Session() as sess:
 		np_images, np_labels = sess.run([images, labels])
+		for i in range(100):
+			np_images, np_labels = sess.run([images, labels])
+			print(np_images.shape)
 
 	if np_images.shape[0] == batch_size:
 		print("my batch size {} is actually matched with batched data tensor".format(batch_size))
@@ -188,6 +189,8 @@ def batch_test(batch_size):
 		print("done")
 	else:
 		print("Fail to get data from files")
+
+
 
 if __name__ == '__main__':
 	main()
