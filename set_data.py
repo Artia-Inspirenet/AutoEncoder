@@ -165,7 +165,7 @@ def create_mnist_dataset(batch_size, split) -> Tuple[tf.data.Dataset, int]:
     ds = tf.data.Dataset.from_generator(gen, (tf.uint8, tf.uint8), ((28, 28, 1), (1,)))
 
     if split == 'train':
-        return ds.shuffle(128, seed=np.random.randint(0, 1024)).batch(batch_size).repeat().map(transform_train), len(labels)
+        return ds.shuffle(128, seed=np.random.randint(0, 1024)).batch(batch_size).prefetch(2).repeat().map(transform_train), len(labels)
     elif split == 'val':
         return ds.batch(batch_size).map(transform_val), len(labels)
 def main():
@@ -187,6 +187,7 @@ def batch_test(batch_size):
 		print("my batch size {} is actually matched with batched data tensor".format(batch_size))
 		print("Each data batch's tensor {}".format(np_images.shape))
 		print("done")
+		print(np_labels)
 	else:
 		print("Fail to get data from files")
 
